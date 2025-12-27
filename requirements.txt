@@ -1,0 +1,11 @@
+streamlit
+numpy
+opencv-python-headless
+tensorflow
+mtcnn
+pillow
+# Optional (for RetinaFace implementations or PyTorch based detectors)
+retinaface
+albumentations
+# facenet-pytorch
+# onnxruntime
