@@ -1,0 +1,12 @@
+- name: Install test requirements
+  command: "{{ venv_path }}/bin/pip install -r {{ test_requirements_file }}"
+
+- name: Run tests
+  command: "{{ venv_path }}/bin/pytest -q --junitxml={{ artifacts_dir }}/junit.xml"
+  register: test_res
+  ignore_errors: yes
+
+- name: Fail on test failures
+  fail:
+    msg: "Tests failed"
+  when: test_res.rc != 0

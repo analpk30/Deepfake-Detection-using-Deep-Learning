@@ -1,0 +1,17 @@
+- hosts: local
+  connection: local
+  tasks:
+    - name: Run black check
+      command: "{{ venv_path }}/bin/black --check ."
+      ignore_errors: yes
+      register: black_res
+
+    - name: Run flake8
+      command: "{{ venv_path }}/bin/flake8 ."
+      ignore_errors: yes
+      register: flake_res
+
+    - name: Fail if static checks failed
+      fail:
+        msg: "Static checks failed (black or flake8)."
+      when: black_res.rc != 0 or flake_res.rc != 0

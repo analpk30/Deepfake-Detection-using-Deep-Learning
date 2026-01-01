@@ -1,0 +1,26 @@
+name: CI - Ansible-driven tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  ansible-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Ansible
+        run: python -m pip install --upgrade pip && pip install ansible
+
+      - name: Run Ansible site playbook
+        run: |
+          ansible-playbook -i .github/ansible/inventory/hosts .github/ansible/playbooks/site.yml
+        env:
+          ANSIBLE_DEPRECATION_WARNINGS: "False"

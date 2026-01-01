@@ -1,0 +1,8 @@
+- hosts: local
+  connection: local
+  tasks:
+    - name: Remove virtualenv (optional)
+      file:
+        path: "{{ venv_path }}"
+        state: absent
+      when: false

@@ -1,0 +1,8 @@
+- hosts: local
+  connection: local
+  tasks:
+    - name: Install test requirements in venv
+      command: "{{ venv_path }}/bin/pip install -r {{ test_requirements_file }}"
+
+    - name: Install project requirements in venv
+      command: "{{ venv_path }}/bin/pip install -r {{ requirements_file }}"
