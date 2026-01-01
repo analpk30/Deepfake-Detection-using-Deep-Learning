@@ -8,4 +8,6 @@ pillow
 retinaface
 albumentations
 # facenet-pytorch
+scikit-learn
 # onnxruntime
+matplotlib

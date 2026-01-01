@@ -3,6 +3,7 @@ import cv2
 import glob
 import random
 import numpy as np
+import tensorflow as tf
 
 
 def list_video_or_frame_dirs(root):
@@ -177,3 +178,66 @@ def data_generator(dataset_root, max_frames=16, batch_size=16, shuffle=True, use
                     yield np.stack(X_batch, axis=0), np.array(y_batch, dtype='float32')
                     X_batch = []
                     y_batch = []
+
+
+def sample_generator(dataset_root, max_frames=16, shuffle=True, use_face_crop=True):
+    """Yield single samples (image, label) indefinitely.
+
+    Each yielded image is a numpy array (128,128,3) float32 and label is int32.
+    This generator is suitable for wrapping with `tf.data.Dataset.from_generator`.
+    """
+    entries = list(list_video_or_frame_dirs(dataset_root))
+    if shuffle:
+        random.shuffle(entries)
+
+    while True:
+        for path, label in entries:
+            if os.path.isdir(path):
+                frames = read_frames_from_dir(path, max_frames=max_frames)
+            else:
+                frames = read_frames_from_video(path, max_frames=max_frames)
+
+            if use_face_crop:
+                try:
+                    crops = detect_and_crop_faces(frames, target_size=(128, 128))
+                except Exception:
+                    crops = np.empty((0, 128, 128, 3), dtype='float32')
+            else:
+                crops_list = []
+                for f in frames:
+                    try:
+                        rgb = cv2.cvtColor(f, cv2.COLOR_BGR2RGB)
+                    except Exception:
+                        rgb = f
+                    try:
+                        resized = cv2.resize(rgb, (128, 128)).astype('float32') / 255.0
+                        crops_list.append(resized)
+                    except Exception:
+                        continue
+                crops = np.array(crops_list, dtype='float32') if len(crops_list) else np.empty((0, 128, 128, 3), dtype='float32')
+
+            for c in crops:
+                yield c, np.int32(label)
+
+
+def build_tf_dataset(dataset_root, batch_size=16, max_frames=16, shuffle=True, use_face_crop=True, buffer_size=1024):
+    """Build a tf.data.Dataset producing batches of (images, labels).
+
+    The dataset is infinite (use steps_per_epoch in model.fit).
+    """
+    output_signature = (
+        tf.TensorSpec(shape=(128, 128, 3), dtype=tf.float32),
+        tf.TensorSpec(shape=(), dtype=tf.int32),
+    )
+
+    ds = tf.data.Dataset.from_generator(
+        lambda: sample_generator(dataset_root, max_frames=max_frames, shuffle=shuffle, use_face_crop=use_face_crop),
+        output_signature=output_signature,
+    )
+
+    if shuffle:
+        ds = ds.shuffle(buffer_size)
+
+    ds = ds.batch(batch_size)
+    ds = ds.prefetch(tf.data.AUTOTUNE)
+    return ds
