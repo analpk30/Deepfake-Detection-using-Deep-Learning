@@ -12,7 +12,7 @@ import argparse
 import math
 import tensorflow as tf
 from models import build_xception
-from train_utils import data_generator
+from train_utils import build_tf_dataset
 
 
 def parse_args():
@@ -36,8 +36,8 @@ def main():
     with strategy.scope():
         model = build_xception(input_shape=(128, 128, 3), pretrained='imagenet', freeze_base=False)
 
-    train_gen = data_generator(args.data_root, max_frames=args.max_frames, batch_size=args.batch_size, use_face_crop=args.use_face_crop)
-    val_gen = data_generator(args.data_root, max_frames=args.max_frames, batch_size=args.batch_size, use_face_crop=args.use_face_crop)
+    train_ds = build_tf_dataset(args.data_root, batch_size=args.batch_size, max_frames=args.max_frames, use_face_crop=args.use_face_crop, shuffle=True)
+    val_ds = build_tf_dataset(args.data_root, batch_size=args.batch_size, max_frames=args.max_frames, use_face_crop=args.use_face_crop, shuffle=False)
 
     callbacks = [
         tf.keras.callbacks.ModelCheckpoint(args.output, save_best_only=True, monitor='loss'),
@@ -45,10 +45,10 @@ def main():
     ]
 
     model.fit(
-        train_gen,
+        train_ds,
         steps_per_epoch=args.steps_per_epoch,
         epochs=args.epochs,
-        validation_data=val_gen,
+        validation_data=val_ds,
         validation_steps=args.val_steps,
         callbacks=callbacks
     )
