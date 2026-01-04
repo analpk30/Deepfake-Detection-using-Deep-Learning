@@ -1,5 +1,7 @@
 - hosts: local
   connection: local
+  vars_files:
+    - ../group_vars/all.yml
   tasks:
     - name: Install test requirements in venv
       command: "{{ venv_path }}/bin/pip install -r {{ test_requirements_file }}"

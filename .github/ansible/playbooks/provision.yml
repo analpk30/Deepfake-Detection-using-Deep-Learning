@@ -1,6 +1,8 @@
 - hosts: local
   connection: local
   become: yes
+  vars_files:
+    - ../group_vars/all.yml
   tasks:
     - name: Update apt cache
       apt:

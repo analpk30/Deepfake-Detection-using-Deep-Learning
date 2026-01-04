@@ -1,5 +1,7 @@
 - hosts: local
   connection: local
+  vars_files:
+    - ../group_vars/all.yml
   tasks:
     - name: Create virtualenv
       command: python3 -m venv {{ venv_path }}

@@ -24,7 +24,7 @@ jobs:
       - name: Run Ansible SDLC site playbook
         run: |
           ansible-playbook -i .github/ansible/inventory/hosts .github/ansible/playbooks/site.yml \
-            -e "venv_path='.venv' artifacts_dir='artifacts' test_requirements_file='requirements-test.txt' requirements_file='requirements.txt' model_path='CNN_model.h5'"
+            -e @.github/ansible/group_vars/all.yml
 
       - name: Upload test artifacts
         if: always()
