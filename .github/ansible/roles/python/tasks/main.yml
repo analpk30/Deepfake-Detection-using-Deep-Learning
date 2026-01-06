@@ -1,0 +1,7 @@
+- name: Create virtualenv (role)
+  command: python3 -m venv {{ venv_path }}
+  args:
+    creates: "{{ venv_path }}/bin/activate"
+
+- name: Upgrade pip
+  command: "{{ venv_path }}/bin/python -m pip install --upgrade pip setuptools wheel"

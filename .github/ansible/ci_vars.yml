@@ -1,0 +1,6 @@
+---
+venv_path: ".venv"
+artifacts_dir: "artifacts"
+test_requirements_file: "requirements-test.txt"
+requirements_file: "requirements.txt"
+model_path: "CNN_model.h5"

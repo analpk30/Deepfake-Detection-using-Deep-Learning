@@ -1,0 +1,26 @@
+FROM python:3.9-slim
+
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Install system deps for opencv
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libglib2.0-0 \
+    libsm6 \
+    libxrender1 \
+    libxext6 \
+ && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY requirements.txt /app/requirements.txt
+RUN pip install --upgrade pip
+RUN pip install -r /app/requirements.txt
+
+# Copy code
+COPY . /app
+
+EXPOSE 8000
+
+CMD ["uvicorn", "serve:app", "--host", "0.0.0.0", "--port", "8000"]

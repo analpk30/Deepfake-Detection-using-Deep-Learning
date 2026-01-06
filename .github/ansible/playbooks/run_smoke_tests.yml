@@ -1,0 +1,14 @@
+- hosts: local
+  connection: local
+  vars_files:
+    - ../group_vars/all.yml
+  tasks:
+    - name: Run pytest smoke tests
+      command: "{{ venv_path }}/bin/pytest -q tests/smoke -k smoke --junitxml={{ artifacts_dir }}/smoke-junit.xml"
+      register: smoke_res
+      ignore_errors: yes
+
+    - name: Fail if smoke tests failed
+      fail:
+        msg: "Smoke tests failed"
+      when: smoke_res.rc != 0
