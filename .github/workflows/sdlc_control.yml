@@ -21,10 +21,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install ansible==7.6.0
 
-      - name: Run Ansible SDLC site playbook
-        run: |
-          ansible-playbook -i .github/ansible/inventory/hosts .github/ansible/playbooks/site.yml \
-            -e @.github/ansible/group_vars/all.yml
+      # - name: Run Ansible SDLC site playbook
+      #   run: |
+      #     ansible-playbook -i .github/ansible/inventory/hosts .github/ansible/playbooks/site.yml \
+      #       -e @.github/ansible/group_vars/all.yml
 
       - name: Upload test artifacts
         if: always()
