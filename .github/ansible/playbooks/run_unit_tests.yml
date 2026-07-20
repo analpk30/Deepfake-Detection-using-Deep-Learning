@@ -1,0 +1,18 @@
+- hosts: local
+  connection: local
+  vars_files:
+    - ../group_vars/all.yml
+  tasks:
+    - name: Run pytest unit tests
+      command: "{{ venv_path }}/bin/pytest -q --junitxml={{ artifacts_dir }}/junit.xml"
+      register: pytest_res
+      ignore_errors: yes
+
+    - name: Show pytest stdout
+      debug:
+        var: pytest_res.stdout_lines
+
+    - name: Fail if tests failed
+      fail:
+        msg: "Unit tests failed"
+      when: pytest_res.rc != 0

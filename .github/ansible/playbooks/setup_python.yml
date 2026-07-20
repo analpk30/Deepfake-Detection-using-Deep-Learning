@@ -1,0 +1,12 @@
+- hosts: local
+  connection: local
+  vars_files:
+    - ../group_vars/all.yml
+  tasks:
+    - name: Create virtualenv
+      command: python3 -m venv {{ venv_path }}
+      args:
+        creates: "{{ venv_path }}/bin/activate"
+
+    - name: Upgrade pip in venv
+      command: "{{ venv_path }}/bin/python -m pip install --upgrade pip setuptools wheel"

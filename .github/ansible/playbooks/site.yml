@@ -1,0 +1,7 @@
+- import_playbook: provision.yml
+- import_playbook: setup_python.yml
+- import_playbook: install_requirements.yml
+- import_playbook: run_static_checks.yml
+- import_playbook: run_unit_tests.yml
+- import_playbook: run_smoke_tests.yml
+- import_playbook: cleanup.yml

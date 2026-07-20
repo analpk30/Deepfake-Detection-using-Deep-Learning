@@ -1,0 +1,27 @@
+- hosts: local
+  connection: local
+  become: yes
+  vars_files:
+    - ../group_vars/all.yml
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install system packages
+      apt:
+        name:
+          - ffmpeg
+          - git
+          - python3-venv
+          - python3-pip
+          - build-essential
+          - libsm6
+          - libxext6
+        state: present
+
+    - name: Ensure artifacts dir exists
+      file:
+        path: "{{ artifacts_dir }}"
+        state: directory
+        mode: '0755'

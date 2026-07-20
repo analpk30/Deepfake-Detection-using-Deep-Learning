@@ -1,0 +1,8 @@
+---
+python_version: "3.10"
+venv_path: ".venv"
+requirements_file: "requirements.txt"
+test_requirements_file: "requirements-test.txt"
+model_path: "CNN_model.h5"
+sample_video: "tests/fixtures/sample.mp4"
+artifacts_dir: "artifacts"
